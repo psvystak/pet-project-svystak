@@ -13,6 +13,10 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(usersRoutes)
+app.use(express.static(path.join(__dirname, '../dist')));
+app.get('/', function(req, res) {
+  res.sendFile('index.html');
+});
 
 async function start() {
   try {
@@ -21,11 +25,11 @@ async function start() {
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        useFindAndModify: true
+        useFindAndModify: false
       }
     )
     app.listen(PORT, () => {
-      console.log('Server has been started...')
+      console.log('Server has been started at http://127.0.0.1:3000')
     })
   } catch (e) {
     console.log(e)

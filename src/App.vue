@@ -1,25 +1,34 @@
 <template>
   <v-app>
     <user-form/>
-    <div class="user" v-for="user in validUsers" :key="user._id">
-      <h2>{{user.first_name}}</h2>
-      <p>{{user.last_name}}</p>
-      <p>{{user.phone_number}}</p>
-      <button @click="deleteUser(user._id)">delete</button>
+    <div v-if="allUsers.length">
+      <div class="user" v-for="user in allUsers" :key="user._id">
+        <h2>{{user.first_name}}</h2>
+        <p>{{user.last_name}}</p>
+        <p>{{user.phone_number}}</p>
+        <button @click="deleteUserFromDB(user._id)">delete</button>
+        <button @click="switchMode(user)">edit</button>
+      </div>
+    </div>
+    <div v-else>
+        <h2>There are no users! Please, try to add a new one</h2>
     </div>
   </v-app>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 import UserForm from "./components/UserForm";
 export default {
   name: "app",
-  computed: mapGetters(["validUsers"]),
-  methods: mapActions(["fetchUsers", "deleteUser"]),
+  computed: mapGetters(["allUsers"]),
+  methods: {
+    ...mapActions(["requireUsersFromDB", "deleteUserFromDB"]),
+    ...mapMutations(["switchMode"]),
+  },
   components: { UserForm },
   async mounted() {
-    this.fetchUsers();
+    this.requireUsersFromDB();
   }
 };
 </script>
@@ -38,5 +47,9 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 1rem;
+}
+
+button {
+  margin: 30px;
 }
 </style>
